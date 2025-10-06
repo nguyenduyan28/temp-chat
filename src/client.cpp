@@ -1,19 +1,25 @@
 #include "client.hpp"
 
-
-Client::Client(int port){
-  constexpr int DEFAULT_PROTOCOL{0};
-  this -> client_fd = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
+Client::Client(){
+  this -> client_fd = socket(AF_INET, SOCK_STREAM, 0);
 }
 
-
-void Client::connect_server(const sockaddr_in& server_addr){
-  connect(this -> client_fd, (sockaddr*)&server_addr, sizeof(server_addr));
-  if (connect == 0){
-    std::cerr << "Connect succesfully to server.\n";
+void Client::connect_to_server(const char * host_name, int port){
+  sockaddr_in server_addr;
+  if (strlen(host_name) == 0){
+    server_addr.sin_addr.s_addr = INADDR_ANY;
   }
   else{
-    std::cerr << "Error at connection.\n";
-    exit(1);
+    inet_pton(AF_INET, host_name, &server_addr.sin_addr);
+  }
+  server_addr.sin_port = htons(port);
+  
+  int rc = connect(this -> client_fd, (sockaddr*)&server_addr, sizeof(server_addr));
+  if (rc == 0){
+    std::cout << "Connect to server sucessfully!\n"; 
+  }
+  else{
+    std::cerr << "Cannot connect to server...\n"; 
+    exit(-1);
   }
 }

@@ -3,18 +3,24 @@
 #include <sys/socket.h>
 #include <vector>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <thread>
 #include <iostream>
 
 class Server{
   int server_fd;
-  std::vector <std::thread> client_thread;
+  int connect_fd;
+  char * host_name;
+  int port;
+  int backlog;
+  sockaddr_in * server_addr;
+  std::vector <sockaddr_in> list_client_info;
 public:
   Server(){};
-  Server(int port);
-  void run();
-  void handle_client(const sockaddr_in& client_addr);
-  friend std::ostream& operator <<(std::ostream& out, const Server& server);
+  Server(std::string host_name, int port);
+  void listen_to_client();
+  void connect_to_client();
+  ~Server();
 };
 
 #endif
