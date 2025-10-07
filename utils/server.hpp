@@ -13,7 +13,7 @@ class Server{
   char * host_name;
   int port;
   int backlog;
-  sockaddr_in * server_addr;
+  sockaddr_in server_addr;
   std::vector <sockaddr_in> list_client_info;
 public:
   Server(){};

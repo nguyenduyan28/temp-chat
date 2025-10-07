@@ -13,12 +13,13 @@ void Client::connect_to_server(const char * host_name, int port){
     inet_pton(AF_INET, host_name, &server_addr.sin_addr);
   }
   server_addr.sin_port = htons(port);
-  
+  server_addr.sin_family = AF_INET;
   int rc = connect(this -> client_fd, (sockaddr*)&server_addr, sizeof(server_addr));
   if (rc == 0){
     std::cout << "Connect to server sucessfully!\n"; 
   }
   else{
+    perror("connect");
     std::cerr << "Cannot connect to server...\n"; 
     exit(-1);
   }

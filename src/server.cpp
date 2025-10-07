@@ -3,26 +3,26 @@
 
 Server::Server(std::string host_name , int port){
   this -> server_fd = socket(AF_INET, SOCK_STREAM, 0);
-  int rc;
+  int rc{};
   if (host_name.size() > 0){
     this -> host_name = new char [host_name.size() + 1];
     strcpy(this -> host_name, host_name.c_str());
     in_addr temp_addr;
-    rc = inet_pton(AF_INET, this -> host_name, &this -> server_addr);
+    rc = inet_pton(AF_INET, this -> host_name, &(temp_addr));
     if (rc < 0){
       std::cerr << "Cannot exchange host name to network address\n";
       exit(-1);
     }
+    this -> server_addr.sin_addr.s_addr = temp_addr.s_addr;
   }
   else{
-    this -> server_addr->sin_addr.s_addr = (INADDR_ANY);
+    this -> server_addr.sin_addr.s_addr = (INADDR_ANY);
   }
-  this -> server_addr -> sin_family = AF_INET;
-  this -> server_addr -> sin_port = htons(port);
-  rc = bind(this -> server_fd, (sockaddr *) &(this -> server_addr), sizeof(this -> server_addr));
-  if (rc < 0){
-    std::cerr << "Cannot bind the server address with server descriptor\n";
-    exit(-2);
+  this -> server_addr.sin_family = AF_INET;
+  this -> server_addr.sin_port = htons(port);
+  if (bind(this -> server_fd, (sockaddr *) (&server_addr), sizeof(this -> server_addr)) < 0){
+    perror("bind");
+    exit(-11);
   }
   this -> backlog = 3; // at most 3 client could connect
   std::cout << "Create socket for server sucessfully! The information of the server:\n";
@@ -44,21 +44,24 @@ void Server::listen_to_client(){
 
 void Server::connect_to_client(){
   sockaddr_in  client_info{};
-  int conn_fd = accept(this -> server_fd, (sockaddr*)&client_info, NULL);
-  if (conn_fd < 0){
-    std::cerr << "Cannot connect to client\n";
-    exit(-4);
+  socklen_t len = sizeof(client_info);
+  while (true){
+    int conn_fd = accept(this -> server_fd, (sockaddr*)&client_info, &len);
+    if (conn_fd < 0){
+      perror("accept");
+      exit(-12);
+    }
+    this -> connect_fd = conn_fd;
+    this -> list_client_info.push_back(client_info);
+    
+    char client_host[INET_ADDRSTRLEN];
+    if (inet_ntop(AF_INET, &client_info, client_host, sizeof(client_host)) == NULL){
+      std::cerr << "Cannot exchange client ip address to host name\n";
+    }
+    std::cout << "Connect sucessfully to client, client info: \n" 
+      << "1. Client Address : " << client_host << '\n'
+      << "2. Port: " << client_info.sin_port;
   }
-  this -> connect_fd = conn_fd;
-  this -> list_client_info.push_back(client_info);
-  
-  char client_host[INET_ADDRSTRLEN];
-  if (inet_ntop(AF_INET, &client_info, client_host, sizeof(client_host)) == NULL){
-    std::cerr << "Cannot exchange client ip address to host name\n";
-  }
-  std::cout << "Connect sucessfully to client, client info: \n" 
-    << "1. Client Address : " << client_host << '\n'
-    << "2. Port: " << client_info.sin_port;
 }
 
 Server::~Server(){

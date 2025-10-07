@@ -69,7 +69,7 @@ std::vector <std::string> hex_to_decimal(std::vector<std::string> hex_value){
 
 int main(){
   std::vector<std::string> hostname_list{
-    "107.212.122.205",
+    "127.0.0.1",
     "64.12.149.13",
     "107.212.96.29"
   };
