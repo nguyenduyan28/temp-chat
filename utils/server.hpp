@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <thread>
 #include <iostream>
+#include <unistd.h>
 
 class Server{
   int server_fd;
@@ -20,6 +21,7 @@ public:
   Server(std::string host_name, int port);
   void listen_to_client();
   void connect_to_client();
+  void show_message();
   ~Server();
 };
 

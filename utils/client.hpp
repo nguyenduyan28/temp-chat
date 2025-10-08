@@ -3,6 +3,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <thread>
+#include <unistd.h>
+#include <sstream>
 
 
 class Client{
@@ -11,5 +13,6 @@ class Client{
 public: 
   Client();
   void connect_to_server(const char * host_name, int port);
+  void send_message();
 
 };

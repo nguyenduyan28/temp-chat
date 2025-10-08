@@ -45,22 +45,33 @@ void Server::listen_to_client(){
 void Server::connect_to_client(){
   sockaddr_in  client_info{};
   socklen_t len = sizeof(client_info);
+  int conn_fd = accept(this -> server_fd, (sockaddr*)&client_info, &len);
+  if (conn_fd < 0){
+    perror("accept");
+    exit(-12);
+  }
+  this -> connect_fd = conn_fd;
+  this -> list_client_info.push_back(client_info);
+  
+  char client_host[INET_ADDRSTRLEN];
+  if (inet_ntop(AF_INET, &client_info, client_host, sizeof(client_host)) == NULL){
+    std::cerr << "Cannot exchange client ip address to host name\n";
+  }
+  std::cerr << "Connect sucessfully to client, client info: \n" 
+    << "1. Client Address : " << client_host << '\n'
+    << "2. Port: " << client_info.sin_port;
+}
+
+void Server::show_message(){
+  std::vector <char> buffer(10000, 0);
   while (true){
-    int conn_fd = accept(this -> server_fd, (sockaddr*)&client_info, &len);
-    if (conn_fd < 0){
-      perror("accept");
-      exit(-12);
+    recv(this -> connect_fd, buffer.data(), sizeof(buffer), 0);
+    if (strcmp(buffer.data(), "Exit Server") == 0){
+      close(this -> connect_fd);
+      break;
     }
-    this -> connect_fd = conn_fd;
-    this -> list_client_info.push_back(client_info);
-    
-    char client_host[INET_ADDRSTRLEN];
-    if (inet_ntop(AF_INET, &client_info, client_host, sizeof(client_host)) == NULL){
-      std::cerr << "Cannot exchange client ip address to host name\n";
-    }
-    std::cout << "Connect sucessfully to client, client info: \n" 
-      << "1. Client Address : " << client_host << '\n'
-      << "2. Port: " << client_info.sin_port;
+    std::cout << "\nMessage from client: ";
+    std::cout << buffer.data();
   }
 }
 

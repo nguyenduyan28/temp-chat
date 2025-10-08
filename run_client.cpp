@@ -10,4 +10,5 @@ int main(){
   std::cout << "Input the server port (e.g 80): ";
   std::cin >> port;
   client.connect_to_server(host_name.c_str(), port);
+  client.send_message();
 }

@@ -10,4 +10,5 @@ int main(){
   Server server(host_name, port);
   server.listen_to_client();
   server.connect_to_client();
+  server.show_message();
 }

@@ -24,3 +24,17 @@ void Client::connect_to_server(const char * host_name, int port){
     exit(-1);
   }
 }
+
+void Client::send_message(){
+  std::string message{};
+  while (true){
+    std::cerr << "\nInput the message: ";
+    std::getline(std::cin, message);
+    ssize_t byte_send = send(this -> client_fd, message.data(), message.length(), 0);
+    if (message == "Exit Server"){
+      close(this -> client_fd);
+      break;
+    }
+    message.clear();
+  }
+}
