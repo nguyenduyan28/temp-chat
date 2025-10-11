@@ -12,7 +12,7 @@ class Client{
 
 public: 
   Client();
-  void connect_to_server(const char * host_name, int port);
-  void send_message();
+  void connect_to_server(const char * host_name, int port) const;
+  void send_message() const;
 
 };
