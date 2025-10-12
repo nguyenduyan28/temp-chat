@@ -1,5 +1,5 @@
 #include "server.hpp"
-
+#include <iostream>
 
 Server::Server(const std::string& host_name , int port): server_fd(socket(AF_INET, SOCK_STREAM, 0)), connect_fd(-1), port(port), host_name(host_name){
   if (!this -> host_name.empty()){
@@ -51,7 +51,7 @@ void Server::connect_to_client(){
   this -> list_client_info.push_back(client_info);
 
   char client_host[INET_ADDRSTRLEN];
-  if (inet_ntop(AF_INET, &client_info, client_host, sizeof(client_host)) == NULL){
+  if (inet_ntop(AF_INET, &client_info, client_host, sizeof(client_host)) == nullptr){
     std::cerr << "Cannot exchange client ip address to host name\n";
   }
   std::cerr << "Connect successfully to client, client info: \n"

@@ -4,10 +4,10 @@
 #include <sstream>
 
 
-std::string network_to_hex(std::string nw){
+std::string network_to_hex(const std::string& nw){
   // from string to int
   try{
-    uint16_t hex_value = static_cast<uint16_t> (std::stoi(nw, NULL, 10));
+    auto hex_value = static_cast<uint16_t> (std::stoi(nw, nullptr, 10));
     uint16_t nw_value = (hex_value);
     std::stringstream ss;
     ss << std::hex << nw_value;

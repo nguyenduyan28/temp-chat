@@ -4,8 +4,6 @@
 #include <vector>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <thread>
-#include <iostream>
 #include <unistd.h>
 
 class Server{

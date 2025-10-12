@@ -1,4 +1,5 @@
 #include "client.hpp"
+#include <iostream>
 
 Client::Client(){
   this -> client_fd = socket(AF_INET, SOCK_STREAM, 0);
